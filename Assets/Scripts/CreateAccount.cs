@@ -18,8 +18,21 @@ public class CreateAccount : MonoBehaviour
     public void OnCreateButtonClicked()
     {
         Debug.Log("Create, username: " + _username.text + ", email: " + _email.text);
-        StartCoroutine(CreateUser(_username.text, _email.text, _password.text));
-        // Utils.LoadScene("Scenes/MainMenu");
+
+        if (("").Equals(_username.text))
+        {
+            Utils.DisplayNotification("Username must be at least 1 character long. I'm not asking for much am I?");
+        }
+        else if (("").Equals(_email.text))
+        {
+            Utils.DisplayNotification("I may not be checking if that's a valid email. But THAT is not a valid email.");
+        }
+        else
+        {
+            StartCoroutine(CreateUser(_username.text, _email.text, _password.text));
+            Utils.DisplayNotification("Created account");
+            // Utils.LoadScene("Scenes/MainMenu");
+        }
     }
 
     public void OnBackButtonClicked()
