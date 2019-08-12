@@ -8,4 +8,12 @@ public class Utils
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(path);
     }
+
+    public static void DisplayNotification(string msg)
+    {
+        GameObject notificationPrefab = Resources.Load<GameObject>("Prefabs/NotificationHolder");
+        GameObject instance = Object.Instantiate(notificationPrefab);
+        Notification notification = instance.GetComponentInChildren<Notification>();
+        notification.SetNotification(msg);
+    }
 }
