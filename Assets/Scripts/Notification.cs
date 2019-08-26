@@ -14,12 +14,12 @@ public class Notification : MonoBehaviour
     public void ClearNotification()
     {
         _notificationText.text = "";
-        _notification.gameObject.SetActive(false);
+
+        Destroy(transform.root.gameObject);
     }
 
     public void SetNotification(string msg)
     {
-        Debug.Log("hi");
         _notificationText.text = msg;
         _notification.gameObject.SetActive(true);
     }

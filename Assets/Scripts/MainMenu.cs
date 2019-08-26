@@ -22,13 +22,13 @@ public class MainMenu : MonoBehaviour
     public void OnForgotAccountButtonClicked()
     {
         Debug.Log("Forgot");
-        Utils.LoadScene("Scenes/ForgotGetEmail");
+        Utils.LoadMenu(MenuTypes.ForgotPassword);
     }
 
     public void OnCreateAccountButtonClicked()
     {
         Debug.Log("Create");
-        Utils.LoadScene("Scenes/CreateAccount");
+        Utils.LoadMenu(MenuTypes.AddAccount);
     }
 
     IEnumerator UserLogin(string username, string password)

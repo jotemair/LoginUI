@@ -6,17 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: c565c450961b09f48b42542779e629c3
-  - enabled: 1
-    path: Assets/Scenes/ChangePassword.unity
-    guid: 3d8c9141b1d86ca4db395eeeee2c8cb9
-  - enabled: 1
-    path: Assets/Scenes/CreateAccount.unity
-    guid: e1fa38964f3a0f54ead4d9e10a71cb43
-  - enabled: 1
-    path: Assets/Scenes/ForgotGetEmail.unity
-    guid: 58084699a7e2ac54992fa21faad25d0d
+    path: Assets/Scenes/Menu.unity
+    guid: 34cd08c58b6cd3349a3e55d13a59b074
   - enabled: 1
     path: Assets/Scenes/LoggedIn.unity
     guid: 35b166624393d684cb26f137ece2d4a3

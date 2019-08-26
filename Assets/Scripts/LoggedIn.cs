@@ -8,6 +8,6 @@ public class LoggedIn : MonoBehaviour
     public void OnBackButtonClicked()
     {
         Debug.Log("Back");
-        Utils.LoadScene("Scenes/MainMenu");
+        Utils.LoadScene("Scenes/Menu");
     }
 }

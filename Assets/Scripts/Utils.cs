@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class Utils
 {
+    public static void LoadMenu(MenuTypes menuType)
+    {
+        GameObject.Find("MenuHandler").GetComponent<MenuHandler>().ChangeMenu(menuType);
+    }
+
     public static void LoadScene(string path)
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(path);

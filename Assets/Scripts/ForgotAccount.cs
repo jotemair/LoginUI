@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 using System;
 using System.Net;
@@ -13,26 +14,18 @@ using System.Linq;
 public class ForgotAccount : MonoBehaviour
 {
     [SerializeField]
-    private InputField _email = null;
-
-    public void OnSendButtonClicked()
-    {
-        Debug.Log("Send clicked with email: " + _email.text);
-
-        SendEmail(_email.text, "<USER NAME HERE>");
-
-        Utils.LoadScene("Scenes/ChangePassword");
-    }
+    private ChangePassword _resetMenu = null;
 
     public void OnBackButtonClicked()
     {
         Debug.Log("Back button clicked");
-        Utils.LoadScene("Scenes/MainMenu");
+        Utils.LoadMenu(MenuTypes.Main);
     }
 
     public void SendEmail(string email, string username)
     {
         string code = GenerateCode();
+        _resetMenu.Username = username;
 
         MailMessage mail = new MailMessage();
         mail.From = new MailAddress("sqlunityclasssydney@gmail.com");
@@ -49,6 +42,11 @@ public class ForgotAccount : MonoBehaviour
 
         smtpServer.Send(mail);
         Debug.Log("Sending Email with code " + code);
+
+        GameObject inputHolderPrefab = Resources.Load<GameObject>("Prefabs/InputHolder");
+        GameObject instance = Instantiate(inputHolderPrefab);
+        InputNotificationHolder inputHolder = instance.GetComponentInChildren<InputNotificationHolder>();
+        inputHolder.SetNotification(code);
     }
 
     private string GenerateCode()
@@ -62,5 +60,43 @@ public class ForgotAccount : MonoBehaviour
         }
 
         return randomCode;
+    }
+
+    public void OnSendButtonClicked(InputField email)
+    {
+        Debug.Log("Get username for email: " + email.text);
+        StartCoroutine(GetUsername(email.text));
+    }
+
+    private IEnumerator GetUsername(string email)
+    {
+        string createUserUrl = "http://localhost/nsirpg/checkemail.php";
+        WWWForm form = new WWWForm();
+        form.AddField("email_Post", email);
+
+
+        UnityWebRequest webRequest = UnityWebRequest.Post(createUserUrl, form);
+
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.isNetworkError || webRequest.isHttpError)
+        {
+            Debug.Log("Sad " + webRequest.error);
+        }
+        else
+        {
+            string response = webRequest.downloadHandler.text;
+
+            Debug.Log(response);
+
+            if (response.Equals("Email does not exists"))
+            {
+                Utils.DisplayNotification(response);
+            }
+            else
+            {
+                SendEmail(email, response);
+            }
+        }
     }
 }

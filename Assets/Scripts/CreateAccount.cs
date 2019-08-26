@@ -38,7 +38,7 @@ public class CreateAccount : MonoBehaviour
     public void OnBackButtonClicked()
     {
         Debug.Log("Back");
-        Utils.LoadScene("Scenes/MainMenu");
+        Utils.LoadMenu(MenuTypes.Main);
     }
 
     IEnumerator CreateUser(string username, string email, string password)
