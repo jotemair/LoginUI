@@ -53,15 +53,12 @@ public class ForgotAccount : MonoBehaviour
 
     private string GenerateCode()
     {
-        int minLow = (int)('a');
-        int maxLow = (int)('z');
-        int minHig = (int)('A');
-        int maxHig = (int)('Z');
+        string randomCharList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         string randomCode = "";
 
         for(int i = 0; i < 6; ++i)
         {
-            randomCode += (Char)( ((UnityEngine.Random.Range(0, 100) % 2) == 0) ? (UnityEngine.Random.Range(minLow, maxLow)) : (UnityEngine.Random.Range(minHig, maxHig)) );
+            randomCode += randomCharList[UnityEngine.Random.Range(0, randomCharList.Length)];
         }
 
         return randomCode;
