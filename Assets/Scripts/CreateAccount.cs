@@ -15,17 +15,36 @@ public class CreateAccount : MonoBehaviour
     [SerializeField]
     private InputField _password = null;
 
+    [SerializeField]
+    private InputField _confirm = null;
+
     public void OnCreateButtonClicked()
     {
         Debug.Log("Create, username: " + _username.text + ", email: " + _email.text);
 
-        if (("").Equals(_username.text))
+        if (_username.text.Length > 30)
+        {
+            Utils.DisplayNotification("Username can be maximum 30 characters long.");
+        }
+        else if (("").Equals(_username.text))
         {
             Utils.DisplayNotification("Username must be at least 1 character long. I'm not asking for much am I?");
         }
         else if (("").Equals(_email.text))
         {
             Utils.DisplayNotification("I may not be checking if that's a valid email. But THAT is not a valid email.");
+        }
+        else if (_email.text.Length > 90)
+        {
+            Utils.DisplayNotification("Realy? Please use an email that's less than 90 characters long");
+        }
+        else if (_password.text.Length > 50)
+        {
+            Utils.DisplayNotification("Password can't be more than 50 characters long.");
+        }
+        else if (!_password.text.Equals(_confirm.text))
+        {
+            Utils.DisplayNotification("Password and confirmation do not match. make sure you type the same password in twice.");
         }
         else
         {
