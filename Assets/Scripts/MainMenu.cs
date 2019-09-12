@@ -12,11 +12,16 @@ public class MainMenu : MonoBehaviour
     [SerializeField]
     private InputField _password = null;
 
+    private void OnEnable()
+    {
+        _username.text = "";
+        _password.text = "";
+    }
+
     public void OnLoginButtonClicked()
     {
         Debug.Log("Login, username: " + _username.text);
-        StartCoroutine(UserLogin(_username.text, _password.text));
-        //Utils.LoadScene("Scenes/LoggedIn");
+        UserLogin();
     }
 
     public void OnForgotAccountButtonClicked()
@@ -31,36 +36,26 @@ public class MainMenu : MonoBehaviour
         Utils.LoadMenu(MenuTypes.AddAccount);
     }
 
-    IEnumerator UserLogin(string username, string password)
+    private void UserLogin()
     {
-        string createUserUrl = "http://localhost/nsirpg/userlogin.php";
-        WWWForm form = new WWWForm();
-        form.AddField("username", username);
-        form.AddField("password", password);
+        const string userLoginUrl = "http://localhost/nsirpg/userlogin.php";
 
+        Dictionary<string, string> fields = new Dictionary<string, string>();
+        fields.Add("username", _username.text);
+        fields.Add("password", _password.text);
 
-        UnityWebRequest webRequest = UnityWebRequest.Post(createUserUrl, form);
+        StartCoroutine(Utils.SendWebRequest(userLoginUrl, fields, UserLoginDone));
+    }
 
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isNetworkError || webRequest.isHttpError)
+    private void UserLoginDone(string response)
+    {
+        if (response.Equals("Success"))
         {
-            Debug.Log("Sad " + webRequest.error);
+            Utils.LoadScene("Scenes/LoggedIn");
         }
         else
         {
-            string response = webRequest.downloadHandler.text;
-
-            Debug.Log(response);
-
-            if (response.Equals("Success"))
-            {
-                Utils.LoadScene("Scenes/LoggedIn");
-            }
-            else
-            {
-                Utils.DisplayNotification(response);
-            }
+            Utils.DisplayNotification(response);
         }
     }
 }

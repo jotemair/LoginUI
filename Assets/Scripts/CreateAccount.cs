@@ -18,10 +18,19 @@ public class CreateAccount : MonoBehaviour
     [SerializeField]
     private InputField _confirm = null;
 
+    private void OnEnable()
+    {
+        _username.text = "";
+        _email.text = "";
+        _password.text = "";
+        _confirm.text = "";
+    }
+
     public void OnCreateButtonClicked()
     {
         Debug.Log("Create, username: " + _username.text + ", email: " + _email.text);
 
+        // Before trying to create a new user, make some basic checks on the input
         if (_username.text.Length > 30)
         {
             Utils.DisplayNotification("Username can be maximum 30 characters long.");
@@ -48,9 +57,7 @@ public class CreateAccount : MonoBehaviour
         }
         else
         {
-            StartCoroutine(CreateUser(_username.text, _email.text, _password.text));
-            Utils.DisplayNotification("Created account");
-            // Utils.LoadScene("Scenes/MainMenu");
+            CreateUser();
         }
     }
 
@@ -60,28 +67,28 @@ public class CreateAccount : MonoBehaviour
         Utils.LoadMenu(MenuTypes.Main);
     }
 
-    IEnumerator CreateUser(string username, string email, string password)
+    private void CreateUser()
     {
-        string createUserUrl = "http://localhost/nsirpg/insertuser.php";
-        WWWForm form = new WWWForm();
-        form.AddField("username", username);
-        form.AddField("email", email);
-        form.AddField("password", password);
+        const string createUserUrl = "http://localhost/nsirpg/insertuser.php";
 
+        Dictionary<string, string> fields = new Dictionary<string, string>();
+        fields.Add("username", _username.text);
+        fields.Add("email", _email.text);
+        fields.Add("password", _password.text);
 
-        UnityWebRequest webRequest = UnityWebRequest.Post(createUserUrl, form);
+        StartCoroutine(Utils.SendWebRequest(createUserUrl, fields, CreateUserDone));
+    }
 
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isNetworkError || webRequest.isHttpError)
+    private void CreateUserDone(string response)
+    {
+        if (response.Equals("Success"))
         {
-            Debug.Log("Sad " + webRequest.error);
+            Utils.LoadMenu(MenuTypes.Main);
+            Utils.DisplayNotification("Created account");
         }
         else
         {
-            string response = webRequest.downloadHandler.text;
-
-            Debug.Log(response);
+            Utils.DisplayNotification("Failed to create account:\n" + response);
         }
     }
 }

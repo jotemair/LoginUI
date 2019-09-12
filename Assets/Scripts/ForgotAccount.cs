@@ -16,6 +16,14 @@ public class ForgotAccount : MonoBehaviour
     [SerializeField]
     private ChangePassword _resetMenu = null;
 
+    [SerializeField]
+    private InputField _email = null;
+
+    private void OnEnable()
+    {
+        _email.text = "";
+    }
+
     public void OnBackButtonClicked()
     {
         Debug.Log("Back button clicked");
@@ -62,41 +70,34 @@ public class ForgotAccount : MonoBehaviour
         return randomCode;
     }
 
-    public void OnSendButtonClicked(InputField email)
+    public void OnSendButtonClicked()
     {
-        Debug.Log("Get username for email: " + email.text);
-        StartCoroutine(GetUsername(email.text));
+        // Since the email isn't passed to the function that processes the webrequest response, we disable interaction to make sure it's unchanged during the process
+        _email.interactable = false;
+        Debug.Log("Get username for email: " + _email.text);
+        GetUsername();
+        _email.interactable = true;
     }
 
-    private IEnumerator GetUsername(string email)
+    private void GetUsername()
     {
-        string createUserUrl = "http://localhost/nsirpg/checkemail.php";
-        WWWForm form = new WWWForm();
-        form.AddField("email_Post", email);
+        const string checkEmailUrl = "http://localhost/nsirpg/checkemail.php";
 
+        Dictionary<string, string> fields = new Dictionary<string, string>();
+        fields.Add("email_Post", _email.text);
 
-        UnityWebRequest webRequest = UnityWebRequest.Post(createUserUrl, form);
+        StartCoroutine(Utils.SendWebRequest(checkEmailUrl, fields, GetUsernameDone));
+    }
 
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isNetworkError || webRequest.isHttpError)
+    private void GetUsernameDone(string response)
+    {
+        if (response.Equals("Email does not exists"))
         {
-            Debug.Log("Sad " + webRequest.error);
+            Utils.DisplayNotification(response);
         }
         else
         {
-            string response = webRequest.downloadHandler.text;
-
-            Debug.Log(response);
-
-            if (response.Equals("Email does not exists"))
-            {
-                Utils.DisplayNotification(response);
-            }
-            else
-            {
-                SendEmail(email, response);
-            }
+            SendEmail(_email.text, response);
         }
     }
 }

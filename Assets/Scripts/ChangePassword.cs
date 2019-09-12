@@ -19,6 +19,12 @@ public class ChangePassword : MonoBehaviour
         set { _username = value; }
     }
 
+    private void OnEnable()
+    {
+        _password.text = "";
+        _confirm.text = "";
+    }
+
     public void OnBackButtonClicked()
     {
         Debug.Log("Back button clicked");
@@ -31,7 +37,7 @@ public class ChangePassword : MonoBehaviour
 
         if (_password.text.Equals(_confirm.text))
         {
-            StartCoroutine(ChangePasword(_password.text));
+            ChangePasswordStart();
         }
         else
         {
@@ -39,37 +45,27 @@ public class ChangePassword : MonoBehaviour
         }
     }
 
-    private IEnumerator ChangePasword(string password)
+    private void ChangePasswordStart()
     {
-        string createUserUrl = "http://localhost/nsirpg/changepassword.php";
-        WWWForm form = new WWWForm();
+        const string changePasswordUrl = "http://localhost/nsirpg/changepassword.php";
 
-        form.AddField("username_Post", _username);
-        form.AddField("password_Post", password);
+        Dictionary<string, string> fields = new Dictionary<string, string>();
+        fields.Add("username_Post", _username);
+        fields.Add("password_Post", _password.text);
 
-        UnityWebRequest webRequest = UnityWebRequest.Post(createUserUrl, form);
+        StartCoroutine(Utils.SendWebRequest(changePasswordUrl, fields, ChangePasswordDone));
+    }
 
-        yield return webRequest.SendWebRequest();
-
-        if (webRequest.isNetworkError || webRequest.isHttpError)
+    private void ChangePasswordDone(string response)
+    {
+        if (response.Equals("Password Changed"))
         {
-            Debug.Log("Sad " + webRequest.error);
+            Utils.LoadMenu(MenuTypes.Main);
+            Utils.DisplayNotification(response);
         }
         else
         {
-            string response = webRequest.downloadHandler.text;
-
-            Debug.Log(response);
-
-            if (response.Equals("Password Changed"))
-            {
-                Utils.LoadMenu(MenuTypes.Main);
-                Utils.DisplayNotification(response);
-            }
-            else
-            {
-                Utils.DisplayNotification("Password reset failed:\n" + response);
-            }
+            Utils.DisplayNotification("Password reset failed:\n" + response);
         }
     }
 }

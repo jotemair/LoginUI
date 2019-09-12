@@ -26,6 +26,7 @@ public class MenuHandler : MonoBehaviour
 
     public void ChangeMenu(MenuTypes menuType)
     {
+        // When changing menus, just deactivate all and then activate the one specified
         DisableAll();
 
         switch (menuType)

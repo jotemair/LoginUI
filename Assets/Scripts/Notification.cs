@@ -13,8 +13,7 @@ public class Notification : MonoBehaviour
 
     public void ClearNotification()
     {
-        _notificationText.text = "";
-
+        // The prefab that holds the notification script is instanced without being parented to anything, so this will only destroy the notification related gameobjects
         Destroy(transform.root.gameObject);
     }
 
