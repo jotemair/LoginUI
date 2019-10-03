@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class Character : MonoBehaviour
 {
@@ -256,18 +253,5 @@ public class Character : MonoBehaviour
         _maxHealth = _constitution * 2 + _endurance / 2 + 50;
         _maxMana = _intelligence * 3 + _endurance / 2 + 10;
         _maxStamina = _endurance * 2 + _strength / 4 + 30;
-    }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        UpdateLook();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

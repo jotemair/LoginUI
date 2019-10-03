@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Networking;
 
 public class ChangePassword : MonoBehaviour
 {
+    #region Private Variables
+
     [SerializeField]
     private InputField _password = null;
 
@@ -14,10 +14,18 @@ public class ChangePassword : MonoBehaviour
 
     private string _username = "";
 
+    #endregion
+
+    #region Public Properties
+
     public string Username
     {
         set { _username = value; }
     }
+
+    #endregion
+
+    #region MonoBehaviour Functions
 
     private void OnEnable()
     {
@@ -25,10 +33,14 @@ public class ChangePassword : MonoBehaviour
         _confirm.text = "";
     }
 
+    #endregion
+
+    #region Public Functions
+
     public void OnBackButtonClicked()
     {
         Debug.Log("Back button clicked");
-        Utils.LoadMenu(MenuTypes.Main);
+        Utils.LoadMenu(MenuHandler.MenuTypes.Main);
     }
 
     public void OnResetButtonClicked()
@@ -45,6 +57,10 @@ public class ChangePassword : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Private Functions
+
     private void ChangePasswordStart()
     {
         const string changePasswordUrl = "http://localhost/nsirpg/changepassword.php";
@@ -60,7 +76,7 @@ public class ChangePassword : MonoBehaviour
     {
         if (response.Equals("Password Changed"))
         {
-            Utils.LoadMenu(MenuTypes.Main);
+            Utils.LoadMenu(MenuHandler.MenuTypes.Main);
             Utils.DisplayNotification(response);
         }
         else
@@ -68,4 +84,6 @@ public class ChangePassword : MonoBehaviour
             Utils.DisplayNotification("Password reset failed:\n" + response);
         }
     }
+
+    #endregion
 }

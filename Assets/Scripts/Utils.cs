@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class Utils
 {
     // A simple function to make menu change calls cleaner
-    public static void LoadMenu(MenuTypes menuType)
+    public static void LoadMenu(MenuHandler.MenuTypes menuType)
     {
         GameObject.Find("MenuHandler").GetComponent<MenuHandler>().ChangeMenu(menuType);
     }

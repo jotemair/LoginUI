@@ -1,22 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    #region Private Variables
+
     [SerializeField]
     private InputField _username = null;
 
     [SerializeField]
     private InputField _password = null;
 
+    #endregion
+
+    #region MonoBehaviour Functions
+
     private void OnEnable()
     {
         _username.text = "";
         _password.text = "";
     }
+
+    #endregion
+
+    #region Public Functions
 
     public void OnLoginButtonClicked()
     {
@@ -27,14 +35,18 @@ public class MainMenu : MonoBehaviour
     public void OnForgotAccountButtonClicked()
     {
         Debug.Log("Forgot");
-        Utils.LoadMenu(MenuTypes.ForgotPassword);
+        Utils.LoadMenu(MenuHandler.MenuTypes.ForgotPassword);
     }
 
     public void OnCreateAccountButtonClicked()
     {
         Debug.Log("Create");
-        Utils.LoadMenu(MenuTypes.AddAccount);
+        Utils.LoadMenu(MenuHandler.MenuTypes.AddAccount);
     }
+
+    #endregion
+
+    #region Private Functions
 
     private void UserLogin()
     {
@@ -58,4 +70,6 @@ public class MainMenu : MonoBehaviour
             Utils.DisplayNotification(response);
         }
     }
+
+    #endregion
 }

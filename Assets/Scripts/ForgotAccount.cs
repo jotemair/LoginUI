@@ -1,62 +1,55 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Networking;
-
-using System;
+// For sending email
 using System.Net;
 using System.Net.Mail;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Linq;
 
 public class ForgotAccount : MonoBehaviour
 {
+    #region Private Variables
+
     [SerializeField]
     private ChangePassword _resetMenu = null;
 
     [SerializeField]
     private InputField _email = null;
 
+    #endregion
+
+    #region MonoBehaviour Functions
+
     private void OnEnable()
     {
         _email.text = "";
     }
 
+    #endregion
+
+    #region Public Functions
+
     public void OnBackButtonClicked()
     {
         Debug.Log("Back button clicked");
-        Utils.LoadMenu(MenuTypes.Main);
+        Utils.LoadMenu(MenuHandler.MenuTypes.Main);
     }
 
-    public void SendEmail(string email, string username)
+    public void OnSendButtonClicked()
     {
-        string code = GenerateCode();
-        _resetMenu.Username = username;
-
-        MailMessage mail = new MailMessage();
-        mail.From = new MailAddress("sqlunityclasssydney@gmail.com");
-        mail.To.Add(email);
-        mail.Subject = "NSI RPG Password Reset";
-        mail.Body = "Hello " + username + "!\nReset using this code: " + code;
-
-        SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
-        smtpServer.Port = 25;
-        smtpServer.Credentials = new NetworkCredential("sqlunityclasssydney@gmail.com", "sqlpassword");
-        smtpServer.EnableSsl = true;
-
-        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate cert, X509Chain chain, SslPolicyErrors policyErrors) { return true; };
-
-        smtpServer.Send(mail);
-        Debug.Log("Sending Email with code " + code);
-
-        GameObject inputHolderPrefab = Resources.Load<GameObject>("Prefabs/InputHolder");
-        GameObject instance = Instantiate(inputHolderPrefab);
-        InputNotificationHolder inputHolder = instance.GetComponentInChildren<InputNotificationHolder>();
-        inputHolder.SetNotification(code);
+        // Since the email isn't passed to the function that processes the webrequest response, we disable interaction to make sure it's unchanged during the process
+        _email.interactable = false;
+        Debug.Log("Get username for email: " + _email.text);
+        GetUsername();
+        _email.interactable = true;
     }
 
+    #endregion
+
+    #region Private Functions
+
+    // Helper function to generate a random code
     private string GenerateCode()
     {
         string randomCharList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -68,15 +61,6 @@ public class ForgotAccount : MonoBehaviour
         }
 
         return randomCode;
-    }
-
-    public void OnSendButtonClicked()
-    {
-        // Since the email isn't passed to the function that processes the webrequest response, we disable interaction to make sure it's unchanged during the process
-        _email.interactable = false;
-        Debug.Log("Get username for email: " + _email.text);
-        GetUsername();
-        _email.interactable = true;
     }
 
     private void GetUsername()
@@ -100,4 +84,40 @@ public class ForgotAccount : MonoBehaviour
             SendEmail(_email.text, response);
         }
     }
+
+    private void SendEmail(string email, string username)
+    {
+        // Generate new random code
+        string code = GenerateCode();
+
+        // Pass the username to the reset menu
+        _resetMenu.Username = username;
+
+        // Create the email
+        MailMessage mail = new MailMessage();
+        mail.From = new MailAddress("sqlunityclasssydney@gmail.com");
+        mail.To.Add(email);
+        mail.Subject = "NSI RPG Password Reset";
+        mail.Body = "Hello " + username + "!\nReset using this code: " + code;
+
+        // Connect to mail server
+        SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
+        smtpServer.Port = 25;
+        smtpServer.Credentials = new NetworkCredential("sqlunityclasssydney@gmail.com", "sqlpassword");
+        smtpServer.EnableSsl = true;
+
+        ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate cert, X509Chain chain, SslPolicyErrors policyErrors) { return true; };
+
+        // Send Mail
+        Debug.Log("Sending Email");
+        smtpServer.Send(mail);
+
+        // Load special notification for code verification
+        GameObject inputHolderPrefab = Resources.Load<GameObject>("Prefabs/InputHolder");
+        GameObject instance = Instantiate(inputHolderPrefab);
+        InputNotificationHolder inputHolder = instance.GetComponentInChildren<InputNotificationHolder>();
+        inputHolder.SetNotification(code);
+    }
+
+    #endregion
 }

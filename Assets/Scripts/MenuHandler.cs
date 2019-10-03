@@ -1,17 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum MenuTypes
-{
-    Main,
-    AddAccount,
-    PasswordReset,
-    ForgotPassword,
-}
+﻿using UnityEngine;
 
 public class MenuHandler : MonoBehaviour
 {
+    #region Private Variables
+
     [SerializeField]
     private GameObject _main = null;
 
@@ -23,6 +15,27 @@ public class MenuHandler : MonoBehaviour
 
     [SerializeField]
     private GameObject _forgot = null;
+
+    #endregion
+
+    #region MonoBehaviour Functions
+
+    private void Start()
+    {
+        ChangeMenu(MenuTypes.Main);
+    }
+
+    #endregion
+
+    #region Public Functions
+
+    public enum MenuTypes
+    {
+        Main,
+        AddAccount,
+        PasswordReset,
+        ForgotPassword,
+    }
 
     public void ChangeMenu(MenuTypes menuType)
     {
@@ -46,6 +59,10 @@ public class MenuHandler : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Private Functions
+
     private void DisableAll()
     {
         _main.SetActive(false);
@@ -54,8 +71,5 @@ public class MenuHandler : MonoBehaviour
         _forgot.SetActive(false);
     }
 
-    public void Start()
-    {
-        ChangeMenu(MenuTypes.Main);
-    }
+    #endregion
 }

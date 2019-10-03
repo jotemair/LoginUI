@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class CreateAccount : MonoBehaviour
 {
+    #region Private Variables
+
     [SerializeField]
     private InputField _username = null;
 
@@ -18,6 +18,10 @@ public class CreateAccount : MonoBehaviour
     [SerializeField]
     private InputField _confirm = null;
 
+    #endregion
+
+    #region MonoBehaviour Functions
+
     private void OnEnable()
     {
         _username.text = "";
@@ -25,6 +29,10 @@ public class CreateAccount : MonoBehaviour
         _password.text = "";
         _confirm.text = "";
     }
+
+    #endregion
+
+    #region Public Functions
 
     public void OnCreateButtonClicked()
     {
@@ -64,8 +72,12 @@ public class CreateAccount : MonoBehaviour
     public void OnBackButtonClicked()
     {
         Debug.Log("Back");
-        Utils.LoadMenu(MenuTypes.Main);
+        Utils.LoadMenu(MenuHandler.MenuTypes.Main);
     }
+
+    #endregion
+
+    #region Private Functions
 
     private void CreateUser()
     {
@@ -83,7 +95,7 @@ public class CreateAccount : MonoBehaviour
     {
         if (response.Equals("Success"))
         {
-            Utils.LoadMenu(MenuTypes.Main);
+            Utils.LoadMenu(MenuHandler.MenuTypes.Main);
             Utils.DisplayNotification("Created account");
         }
         else
@@ -91,4 +103,6 @@ public class CreateAccount : MonoBehaviour
             Utils.DisplayNotification("Failed to create account:\n" + response);
         }
     }
+
+    #endregion
 }
