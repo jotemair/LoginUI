@@ -2,11 +2,13 @@
 
 public class Character : MonoBehaviour
 {
+    private string _name = "";
+
     public enum CharacterClass
     {
         Warrior = 0,
         Wizard,
-        Rogue,
+        Wanderer,
         Count,
     }
 
@@ -47,6 +49,12 @@ public class Character : MonoBehaviour
     private GameObject _hat = null;
     private GameObject _cape = null;
 
+    public string Name
+    {
+        get { return _name; }
+        set { _name = value; }
+    }
+
     public CharacterClass CharacterClassValue
     {
         get { return _characterClass; }
@@ -80,25 +88,25 @@ public class Character : MonoBehaviour
     public int Constitution
     {
         get { return _constitution; }
-        set { _constitution = value; UpdateSecondaryStats(); }
+        set { _constitution = Mathf.Clamp(value, 1, MAX_STAT); UpdateSecondaryStats(); }
     }
 
     public int Intelligence
     {
         get { return _intelligence; }
-        set { _intelligence = value; UpdateSecondaryStats(); }
+        set { _intelligence = Mathf.Clamp(value, 1, MAX_STAT); UpdateSecondaryStats(); }
     }
 
     public int Endurance
     {
         get { return _endurance; }
-        set { _endurance = value; UpdateSecondaryStats(); }
+        set { _endurance = Mathf.Clamp(value, 1, MAX_STAT); UpdateSecondaryStats(); }
     }
 
     public int Strength
     {
         get { return _strength; }
-        set { _strength = value; UpdateSecondaryStats(); }
+        set { _strength = Mathf.Clamp(value, 1, MAX_STAT); UpdateSecondaryStats(); }
     }
 
     public int MaxHealth
@@ -194,6 +202,8 @@ public class Character : MonoBehaviour
 
     private void SetCharacterClass(CharacterClass characterClass)
     {
+        _characterClass = characterClass;
+
         if (null != _body)
         {
             Destroy(_body);
@@ -202,10 +212,15 @@ public class Character : MonoBehaviour
 
         GameObject bodyPrefab = Resources.Load<GameObject>("Prefabs/" + _characterClass.ToString());
         _body = Instantiate<GameObject>(bodyPrefab, transform);
+
+        SetCharacterColor(_characterColor);
+        SetCharacterSize(_characterSize);
     }
 
     private void SetCharacterColor(CharacterColor characterColor)
     {
+        _characterColor = characterColor;
+
         Material mat = Resources.Load<Material>("Materials/" + _characterColor.ToString());
 
         foreach (var renderer in _body.GetComponentsInChildren<Renderer>())
@@ -216,18 +231,20 @@ public class Character : MonoBehaviour
 
     private void SetCharacterSize(CharacterSize size)
     {
+        _characterSize = size;
+
         transform.localScale = new Vector3(1f, 1f, 1f) * (((float)(_characterSize) + 1f) / 2f);
     }
 
     private void SetHat(bool hasHat)
     {
-        
-        if ((hasHat) && (null == _hat))
+        _hasHat = hasHat;
+        if ((_hasHat) && (null == _hat))
         {
             GameObject hatPrefab = Resources.Load<GameObject>("Prefabs/Hat");
             _hat = Instantiate<GameObject>(hatPrefab, transform);
         }
-        else if ((!hasHat) && (null != _hat))
+        else if ((!_hasHat) && (null != _hat))
         {
             Destroy(_hat);
             _hat = null;
@@ -236,12 +253,13 @@ public class Character : MonoBehaviour
 
     private void SetCape(bool hasCape)
     {
-        if ((hasCape) && (null == _cape))
+        _hasCape = hasCape;
+        if ((_hasCape) && (null == _cape))
         {
             GameObject capePrefab = Resources.Load<GameObject>("Prefabs/Cape");
             _cape = Instantiate<GameObject>(capePrefab, transform);
         }
-        else if ((!hasCape) && (null != _cape))
+        else if ((!_hasCape) && (null != _cape))
         {
             Destroy(_cape);
             _cape = null;
@@ -250,8 +268,8 @@ public class Character : MonoBehaviour
 
     private void UpdateSecondaryStats()
     {
-        _maxHealth = _constitution * 2 + _endurance / 2 + 50;
+        _maxHealth = _constitution * 2 + _endurance / 2 + _strength / 2 + 50;
         _maxMana = _intelligence * 3 + _endurance / 2 + 10;
-        _maxStamina = _endurance * 2 + _strength / 4 + 30;
+        _maxStamina = _endurance * 2 + _strength / 2 + _constitution / 2 + 30;
     }
 }

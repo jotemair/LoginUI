@@ -50,6 +50,8 @@ public class MainMenu : MonoBehaviour
 
     private void UserLogin()
     {
+        CurrentUserManager.Instance.User = _username.text;
+
         const string userLoginUrl = "http://localhost/nsirpg/userlogin.php";
 
         Dictionary<string, string> fields = new Dictionary<string, string>();
@@ -63,6 +65,7 @@ public class MainMenu : MonoBehaviour
     {
         if (response.Equals("Success"))
         {
+            CurrentUserManager.Instance.LoadCharacters();
             Utils.LoadScene("Scenes/LoggedIn");
         }
         else
