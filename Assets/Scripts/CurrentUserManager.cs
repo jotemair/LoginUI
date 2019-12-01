@@ -118,7 +118,7 @@ public class CurrentUserManager : MonoBehaviour
     public void AddCharacter(string name, int code, bool save = true)
     {
         _characters.Add((name, code));
-        
+        Debug.Log("Added character " + name);
         if (save)
         {
             SaveCharacters();
